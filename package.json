@@ -1,0 +1,17 @@
+{
+  "name": "job-tracker",
+  "version": "1.0.0",
+  "description": "A modern, simple, and responsive job application tracker website",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "job-tracker",
+    "kanban",
+    "careers",
+    "productivity"
+  ],
+  "author": "",
+  "license": "MIT"
+}

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobTracker | Simple & Modern Job Application Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💼</text></svg>">
+</head>
+<body>
+  <!-- App Container -->
+  <div class="app-layout">
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+      <div class="nav-brand">
+        <div class="brand-icon">💼</div>
+        <div class="brand-text">
+          <h1>Job<span>Tracker</span></h1>
+          <span class="badge-tag">Career Hub</span>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <!-- Search bar -->
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Search company, role, location... (Ctrl+K)">
+          <button id="clearSearchBtn" class="clear-btn" title="Clear search" style="display: none;">&times;</button>
+        </div>
+
+        <!-- View Switcher -->
+        <div class="view-toggle" role="group" aria-label="View switch">
+          <button id="viewBoardBtn" class="view-btn active" title="Kanban Board View">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="18" rx="1.5"></rect>
+              <rect x="14" y="3" width="7" height="18" rx="1.5"></rect>
+            </svg>
+            <span>Board</span>
+          </button>
+          <button id="viewListBtn" class="view-btn" title="Table List View">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            <span>List</span>
+          </button>
+        </div>
+
+        <!-- Theme Toggle Button -->
+        <button id="themeToggleBtn" class="icon-btn" title="Toggle Dark/Light Mode">
+          <span class="theme-icon-light">☀️</span>
+          <span class="theme-icon-dark">🌙</span>
+        </button>
+
+        <!-- New Application Button -->
+        <button id="addJobBtn" class="btn btn-primary">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Add Application</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+      <!-- Metrics Dashboard -->
+      <section class="metrics-grid">
+        <div class="metric-card metric-total" data-filter="all">
+          <div class="metric-icon">📊</div>
+          <div class="metric-info">
+            <span class="metric-label">Total Tracked</span>
+            <span class="metric-value" id="statTotal">0</span>
+          </div>
+        </div>
+        <div class="metric-card metric-wishlist" data-filter="wishlist">
+          <div class="metric-icon">⭐</div>
+          <div class="metric-info">
+            <span class="metric-label">Wishlist</span>
+            <span class="metric-value" id="statWishlist">0</span>
+          </div>
+        </div>
+        <div class="metric-card metric-applied" data-filter="applied">
+          <div class="metric-icon">📤</div>
+          <div class="metric-info">
+            <span class="metric-label">Applied</span>
+            <span class="metric-value" id="statApplied">0</span>
+          </div>
+        </div>
+        <div class="metric-card metric-interviewing" data-filter="interviewing">
+          <div class="metric-icon">💬</div>
+          <div class="metric-info">
+            <span class="metric-label">Interviewing</span>
+            <span class="metric-value" id="statInterviewing">0</span>
+          </div>
+        </div>
+        <div class="metric-card metric-offer" data-filter="offer">
+          <div class="metric-icon">🎉</div>
+          <div class="metric-info">
+            <span class="metric-label">Offers</span>
+            <span class="metric-value" id="statOffer">0</span>
+          </div>
+        </div>
+        <div class="metric-card metric-rejected" data-filter="rejected">
+          <div class="metric-icon">🛑</div>
+          <div class="metric-info">
+            <span class="metric-label">Rejected</span>
+            <span class="metric-value" id="statRejected">0</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Filter & Tools Bar -->
+      <section class="toolbar">
+        <div class="toolbar-left">
+          <div class="filter-group">
+            <label for="statusFilter">Status:</label>
+            <select id="statusFilter" class="select-control">
+              <option value="all">All Statuses</option>
+              <option value="wishlist">Wishlist</option>
+              <option value="applied">Applied</option>
+              <option value="interviewing">Interviewing</option>
+              <option value="offer">Offer</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="workplaceFilter">Location Type:</label>
+            <select id="workplaceFilter" class="select-control">
+              <option value="all">All Types</option>
+              <option value="Remote">Remote</option>
+              <option value="Hybrid">Hybrid</option>
+              <option value="On-site">On-site</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="sortBy">Sort By:</label>
+            <select id="sortBy" class="select-control">
+              <option value="date-desc">Date Applied (Newest)</option>
+              <option value="date-asc">Date Applied (Oldest)</option>
+              <option value="company-asc">Company (A-Z)</option>
+              <option value="company-desc">Company (Z-A)</option>
+              <option value="priority-desc">Priority (High to Low)</option>
+            </select>
+          </div>
+
+          <button id="resetFiltersBtn" class="btn btn-ghost btn-sm" title="Reset all filters">Reset</button>
+        </div>
+
+        <div class="toolbar-right">
+          <!-- Backup & Data Options Dropdown -->
+          <button id="dataMenuBtn" class="btn btn-secondary btn-sm" title="Data Backup and Export">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Manage Data</span>
+          </button>
+          <div id="dataMenuDropdown" class="dropdown-menu">
+            <button class="dropdown-item" id="exportJsonBtn">
+              <span>📥 Export JSON (Backup)</span>
+            </button>
+            <button class="dropdown-item" id="exportCsvBtn">
+              <span>📄 Export to CSV (Spreadsheet)</span>
+            </button>
+            <label class="dropdown-item" style="cursor: pointer;">
+              <span>📤 Import from JSON</span>
+              <input type="file" id="importJsonInput" accept=".json" style="display: none;">
+            </label>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item text-primary" id="loadSampleDataBtn">
+              <span>✨ Load Demo Applications</span>
+            </button>
+            <button class="dropdown-item text-danger" id="clearAllDataBtn">
+              <span>🗑️ Clear All Data</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Active Filter Banner (Conditional) -->
+      <div id="filterBanner" class="filter-banner" style="display: none;">
+        <span>Showing filtered results (<strong id="filterCount">0</strong> applications match)</span>
+        <button id="clearActiveFilterBtn" class="btn-link">Clear filter</button>
+      </div>
+
+      <!-- Kanban Board View -->
+      <section id="boardView" class="board-container">
+        <!-- Wishlist Column -->
+        <div class="board-column" data-status="wishlist">
+          <div class="column-header column-wishlist">
+            <div class="col-title">
+              <span class="status-dot"></span>
+              <h3>Wishlist</h3>
+              <span class="col-count" id="count-wishlist">0</span>
+            </div>
+            <button class="col-add-btn" data-add-status="wishlist" title="Add to Wishlist">+</button>
+          </div>
+          <div class="column-cards" id="cards-wishlist" data-status="wishlist"></div>
+        </div>
+
+        <!-- Applied Column -->
+        <div class="board-column" data-status="applied">
+          <div class="column-header column-applied">
+            <div class="col-title">
+              <span class="status-dot"></span>
+              <h3>Applied</h3>
+              <span class="col-count" id="count-applied">0</span>
+            </div>
+            <button class="col-add-btn" data-add-status="applied" title="Add to Applied">+</button>
+          </div>
+          <div class="column-cards" id="cards-applied" data-status="applied"></div>
+        </div>
+
+        <!-- Interviewing Column -->
+        <div class="board-column" data-status="interviewing">
+          <div class="column-header column-interviewing">
+            <div class="col-title">
+              <span class="status-dot"></span>
+              <h3>Interviewing</h3>
+              <span class="col-count" id="count-interviewing">0</span>
+            </div>
+            <button class="col-add-btn" data-add-status="interviewing" title="Add to Interviewing">+</button>
+          </div>
+          <div class="column-cards" id="cards-interviewing" data-status="interviewing"></div>
+        </div>
+
+        <!-- Offer Column -->
+        <div class="board-column" data-status="offer">
+          <div class="column-header column-offer">
+            <div class="col-title">
+              <span class="status-dot"></span>
+              <h3>Offer</h3>
+              <span class="col-count" id="count-offer">0</span>
+            </div>
+            <button class="col-add-btn" data-add-status="offer" title="Add to Offer">+</button>
+          </div>
+          <div class="column-cards" id="cards-offer" data-status="offer"></div>
+        </div>
+
+        <!-- Rejected Column -->
+        <div class="board-column" data-status="rejected">
+          <div class="column-header column-rejected">
+            <div class="col-title">
+              <span class="status-dot"></span>
+              <h3>Rejected</h3>
+              <span class="col-count" id="count-rejected">0</span>
+            </div>
+            <button class="col-add-btn" data-add-status="rejected" title="Add to Rejected">+</button>
+          </div>
+          <div class="column-cards" id="cards-rejected" data-status="rejected"></div>
+        </div>
+      </section>
+
+      <!-- Table / List View -->
+      <section id="listView" class="list-container" style="display: none;">
+        <div class="table-card">
+          <table class="jobs-table">
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Role / Title</th>
+                <th>Status</th>
+                <th>Location</th>
+                <th>Salary</th>
+                <th>Date Applied</th>
+                <th>Priority</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="jobsTableBody">
+              <!-- Rendered rows -->
+            </tbody>
+          </table>
+          <div id="tableEmptyState" class="empty-state" style="display: none;">
+            <p>No job applications match your filters.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <p>💼 <strong>JobTracker</strong> — Track applications, nail your interviews, and get hired.</p>
+        <div class="footer-links">
+          <span>All data saved securely in your browser</span>
+          <span class="divider">•</span>
+          <span id="quickStatsFooter">0 total active applications</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Modal: Add / Edit Application -->
+  <div id="jobModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h2 id="modalTitle">Add Job Application</h2>
+        <button id="closeModalBtn" class="close-btn" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <form id="jobForm" class="job-form">
+        <input type="hidden" id="jobId" value="">
+
+        <div class="form-row two-cols">
+          <div class="form-group">
+            <label for="companyInput">Company Name <span class="required">*</span></label>
+            <input type="text" id="companyInput" placeholder="e.g. Google, Stripe, Airbnb" required>
+          </div>
+          <div class="form-group">
+            <label for="roleInput">Job Role / Title <span class="required">*</span></label>
+            <input type="text" id="roleInput" placeholder="e.g. Frontend Engineer, Product Manager" required>
+          </div>
+        </div>
+
+        <div class="form-row three-cols">
+          <div class="form-group">
+            <label for="statusInput">Stage / Status</label>
+            <select id="statusInput">
+              <option value="wishlist">Wishlist</option>
+              <option value="applied" selected>Applied</option>
+              <option value="interviewing">Interviewing</option>
+              <option value="offer">Offer</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="workplaceInput">Location Type</label>
+            <select id="workplaceInput">
+              <option value="Remote">Remote</option>
+              <option value="Hybrid">Hybrid</option>
+              <option value="On-site">On-site</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="priorityInput">Priority</label>
+            <select id="priorityInput">
+              <option value="high">High ⭐⭐⭐</option>
+              <option value="medium" selected>Medium ⭐⭐</option>
+              <option value="low">Low ⭐</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row two-cols">
+          <div class="form-group">
+            <label for="locationInput">City / Region</label>
+            <input type="text" id="locationInput" placeholder="e.g. San Francisco, CA / London / Remote">
+          </div>
+          <div class="form-group">
+            <label for="salaryInput">Salary / Compensation</label>
+            <input type="text" id="salaryInput" placeholder="e.g. $120k - $150k or $60/hr">
+          </div>
+        </div>
+
+        <div class="form-row two-cols">
+          <div class="form-group">
+            <label for="appliedDateInput">Date Applied / Saved</label>
+            <input type="date" id="appliedDateInput" required>
+          </div>
+          <div class="form-group">
+            <label for="jobUrlInput">Job Post Link / URL</label>
+            <input type="url" id="jobUrlInput" placeholder="https://jobs.example.com/posting">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="contactInput">Recruiter / Contact Name & Email</label>
+          <input type="text" id="contactInput" placeholder="e.g. Jane Doe (jane@company.com)">
+        </div>
+
+        <div class="form-group">
+          <label for="notesInput">Notes, Key Requirements & Interview Questions</label>
+          <textarea id="notesInput" rows="4" placeholder="Referral from John, prep system design, team uses React & Go..."></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="cancelModalBtn" class="btn btn-ghost">Cancel</button>
+          <button type="submit" id="saveJobBtn" class="btn btn-primary">Save Application</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: View Details -->
+  <div id="detailsModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-window modal-lg">
+      <div class="modal-header">
+        <div class="details-header-brand">
+          <div class="company-avatar lg" id="detailsAvatar">CO</div>
+          <div>
+            <h2 id="detailsRole">Senior Software Engineer</h2>
+            <p id="detailsCompany" class="details-subtitle">Google • Mountain View, CA</p>
+          </div>
+        </div>
+        <button id="closeDetailsBtn" class="close-btn" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <div class="details-body">
+        <!-- Quick Meta Tags -->
+        <div class="details-meta-grid">
+          <div class="meta-item">
+            <span class="meta-label">Status</span>
+            <span id="detailsStatusBadge" class="status-badge status-applied">Applied</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Workplace</span>
+            <span id="detailsWorkplace" class="meta-val">Remote</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Salary</span>
+            <span id="detailsSalary" class="meta-val">$140k - $160k</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Applied On</span>
+            <span id="detailsDate" class="meta-val">Oct 24, 2024</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Priority</span>
+            <span id="detailsPriority" class="meta-val">High</span>
+          </div>
+          <div class="meta-item" id="detailsContactContainer">
+            <span class="meta-label">Recruiter / Contact</span>
+            <span id="detailsContact" class="meta-val">Sarah Jenkins</span>
+          </div>
+        </div>
+
+        <!-- Job Link Section -->
+        <div id="detailsUrlSection" class="details-section">
+          <h4>Job Posting Link</h4>
+          <a id="detailsLink" href="#" target="_blank" rel="noopener noreferrer" class="external-link">
+            <span>Open Job Listing</span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </a>
+        </div>
+
+        <!-- Notes Section -->
+        <div class="details-section">
+          <h4>Notes & Details</h4>
+          <div id="detailsNotes" class="notes-content">No notes added.</div>
+        </div>
+
+        <!-- Quick Status Changer -->
+        <div class="details-section">
+          <h4>Move Application To</h4>
+          <div class="stage-stepper" id="detailsStatusButtons">
+            <!-- Dynamically populated buttons -->
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer space-between">
+        <button id="deleteJobFromDetailsBtn" class="btn btn-danger-outline">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+          Delete
+        </button>
+        <div class="btn-group">
+          <button id="editJobFromDetailsBtn" class="btn btn-secondary">Edit Application</button>
+          <button id="closeDetailsBottomBtn" class="btn btn-primary">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- Script -->
+  <script src="app.js"></script>
+</body>
+</html>
